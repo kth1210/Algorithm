@@ -1,19 +1,16 @@
 import random
 import statistics
+import math
 
-ids = []
-size = []
-p = []
-
-def root(i):
+def root(ids, i):
     while i != ids[i]: i = ids[i]
     return i
 
-def connected(p, q):
-    return root(p) == root(q)
+def connected(ids, p, q):
+    return root(ids, p) == root(ids, q)
 
-def union(p, q):    
-    id1, id2 = root(p), root(q)
+def union(ids, size, p, q):
+    id1, id2 = root(ids, p), root(ids, q)
     if id1 == id2: return
     if size[id1] <= size[id2]: 
         ids[id1] = id2
@@ -23,8 +20,11 @@ def union(p, q):
         size[id1] += size[id2]
 
 def simulate(n, t):
+    p = []
     for _ in range(0, t):
         open = []
+        ids = []
+        size = []
         top = (n*n)
         bottom = (n*n) + 1
         cnt = 0
@@ -39,56 +39,49 @@ def simulate(n, t):
         open[bottom] = 1
 
         for idx in range(0, n):
-            union(ids[idx], ids[top])
+            union(ids, size, ids[idx], ids[top])
 
         for idx in range((n * n) - n, (n * n)):
-            union(ids[idx], ids[bottom])
+            union(ids, size, ids[idx], ids[bottom])
 
-
-        while connected(ids[top], ids[bottom]) == False:
+        while connected(ids, ids[top], ids[bottom]) == False:
             rand = random.randrange(0, (n*n))
             if open[rand] == 1:
                 continue
 
             open[rand] = 1
-            cnt = cnt + 1
+            cnt += 1
             
             #left
             if rand % n != 0:
                 if open[rand - 1] == 1:
-                    union(ids[rand], ids[rand - 1])
+                    union(ids, size, ids[rand], ids[rand - 1])
             
             #right
             if (rand +1) % n != 0:
                 if open[rand + 1] == 1:
-                    union(ids[rand], ids[rand + 1])
+                    union(ids, size, ids[rand], ids[rand + 1])
 
             #top
             if (rand - n) >= 0:
                 if open[rand - n] == 1:
-                    union(ids[rand], ids[rand - n])
+                    union(ids, size, ids[rand], ids[rand - n])
 
             #bottom
             if (rand + n) < (n*n):
                 if open[rand + n] == 1:
-                    union(ids[rand], ids[rand + n])
+                    union(ids, size, ids[rand], ids[rand + n])
 
         per = float(cnt / (n*n))
-
         p.append(per)
-
-        ids.clear()
-        open.clear()
-
 
     m = statistics.mean(p)
     s = statistics.stdev(p)
+    interval_start = m - 1.96 * s / math.sqrt(t)
+    interval_end = m + 1.96 * s / math.sqrt(t)
+
+    print("mean = %.10f" % (m))
+    print("stdev = %.10f" % (s))
+    print("95%% confidence interval = [%.10f, %.10f]" % (interval_start, interval_end))
 
     return m, s
-
-
-'''
-Unit Test
-'''
-if __name__ == "__main__":
-    print(simulate(200, 100))
