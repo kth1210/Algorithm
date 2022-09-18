@@ -72,6 +72,10 @@ def simulate(n, t):
                 if open[rand + n] == 1:
                     union(ids, size, ids[rand], ids[rand + n])
 
+        if cnt == 0:
+            open[0] = 1
+            cnt = 1
+
         per = float(cnt / (n*n))
         p.append(per)
 
@@ -85,3 +89,5 @@ def simulate(n, t):
     print("95%% confidence interval = [%.10f, %.10f]" % (interval_start, interval_end))
 
     return m, s
+
+simulate(1, 2)
