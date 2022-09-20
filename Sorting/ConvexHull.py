@@ -32,9 +32,6 @@ def grahamScan(points):
         if ccw(result[result_idx - 2], result[result_idx - 1], result[result_idx]):
             angle_idx += 1
         else:
-            result.pop(result_idx - 1)
-            result_idx -= 1
-
             while ccw(result[result_idx - 2], result[result_idx - 1], result[result_idx]) == False:
                 result.pop(result_idx - 1)
                 result_idx -= 1
@@ -47,8 +44,6 @@ def grahamScan(points):
     print(result)
 
 
-
-
-if __name__ == "__main__":
-    grahamScan([(0, 0), (-2, -1), (-1, 1), (1, -1), (3, -1), (-3, -1)])
-    grahamScan([(4,2), (3,-1), (2,-2), (1,0), (0,2), (0,-2), (-1,1), (-2,-1), (-2,-3), (-3,3), (-4,0), (-4,-2), (-4,-4)])
+# if __name__ == "__main__":
+#     grahamScan([(0, 0), (-2, -1), (-1, 1), (1, -1), (3, -1), (-3, -1)])
+#     grahamScan([(4,2), (3,-1), (2,-2), (1,0), (0,2), (0,-2), (-1,1), (-2,-1), (-2,-3), (-3,3), (-4,0), (-4,-2), (-4,-4)])
