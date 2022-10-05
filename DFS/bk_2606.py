@@ -1,4 +1,3 @@
-import re
 import sys
 
 def dfs(graph, v, visited, result):
