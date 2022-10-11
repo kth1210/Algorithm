@@ -39,7 +39,34 @@ segments: list of Segment objects
 return value: list of Segment pairs that intersect
 '''
 def sweepLine(segments):
-    pass
+    
+    minPQ = PriorityQueue()
+    bst = LLRB()
+    result = []
+
+    for idx in range(len(segments)):
+        minPQ.put((segments[idx].x1, segments[idx]))
+        if segments[idx].x1 != segments[idx].x2:
+            minPQ.put((segments[idx].x2, segments[idx]))
+    
+    while minPQ.qsize() > 0:
+        e = minPQ.get()
+
+        if e[1].isHorizontal():
+            if e[0] == e[1].x1:
+                bst.put(e[1].y1, e[1])
+            else:
+                bst.delete(e[1].y1)
+                
+        if e[1].isVertical():
+            if bst.rangeCount(e[1].y1, e[1].y2) != 0:
+                temp = bst.rangeSearch(e[1].y1, e[1].y2)
+
+                for t in temp:
+                    c = bst.get(t)
+                    result.append((c, e[1]))
+
+    return result
 
 if __name__ == "__main__":
     '''
