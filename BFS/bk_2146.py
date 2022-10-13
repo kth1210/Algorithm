@@ -1,6 +1,5 @@
 import sys
 from collections import deque
-from tabnanny import check
 sys.setrecursionlimit(10**8)
 
 N = int(sys.stdin.readline().rstrip())
