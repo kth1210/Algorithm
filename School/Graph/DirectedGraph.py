@@ -184,10 +184,26 @@ Class that finds SCC (Strongly-Connected Components) and stores the results
 '''
 class SCC:
     def __init__(self, g): # Do strongly-connected-components pre-processing, based on Kosaraju-Sharir algorithm
-        pass       
+        def recur(v):
+            self.id[v] = self.count
+            for w in g.adj[v]:
+                if self.id[w] < 0: 
+                    recur(w)
+        
+        reverse_graph = g.reverse()
+        topo_order = topologicalSort(reverse_graph)
+        
+        self.g = g
+        self.id = [-1 for i in range(g.V)]
+        self.count = 0
+
+        for v in topo_order:
+            if self.id[v] < 0:
+                recur(v)
+                self.count += 1
 
     def connected(self, v, w): # Are v and w connected?
-        pass
+        return self.id[v] == self.id[w]
 
 
 if __name__ == "__main__":
@@ -283,7 +299,7 @@ if __name__ == "__main__":
     print("g5, topological order", topologicalSort(g5))
     print("g5r, topological order", topologicalSort(g5.reverse()))'''
 
-    '''# Unit test for Kosaraju-Sharir for Finding Strongly-Connected Components
+    # Unit test for Kosaraju-Sharir for Finding Strongly-Connected Components
     g1 = Digraph(6)
     g1.addEdge(0,1)
     g1.addEdge(1,2)
@@ -362,7 +378,7 @@ if __name__ == "__main__":
     print("scc3.connected(7,8)", scc3.connected(7,8))
     print("scc3.connected(7,11)", scc3.connected(7,11))
     print("scc3.connected(10,12)", scc3.connected(10,12))
-    print()'''
+    print()
     
     '''# Unit test for speed
     n=10000
