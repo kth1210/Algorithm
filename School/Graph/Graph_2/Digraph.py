@@ -243,9 +243,61 @@ Find the sap(shortest ancestral path) on digraph g between any vertex in aList a
 Return the common ancestor and the length of sap
 '''
 def sap(g, aList, bList):    
-    pass          
+    sap_queue = Queue()
+    visited = {}
+
+    for a in aList:
+        sap_queue.put((a, 'a', 0))
+        visited[a] = (0, -1)
+
+        if a in bList:
+            return (a, 0)
+
+    for b in bList:
+        sap_queue.put((b, 'b', 0))
+        visited[b] = (-1, 0)
+    
+    sapLength = math.inf
+    sapNode = math.inf
+
+    while not sap_queue.empty():
+        v = sap_queue.get()
+        
+        if v[2] > sapLength:
+            break
+            
+        for w in g.adj[v[0]]:
+            if v[1] == 'a':
+                if w in visited:
+                    if visited[w][0] == -1:
+                        visited[w] = (v[2] + 1, visited[w][1])
+                        sap_queue.put((w, 'a', v[2] + 1))
+                    if visited[w][1] != -1:
+                        temp = v[2] + 1 + visited[w][1]
+                        if temp < sapLength:
+                            sapLength = temp
+                            sapNode = w
+                else:
+                    visited[w] = (v[2] + 1, -1)
+                    sap_queue.put((w, 'a', v[2] + 1))
+            elif v[1] == 'b':
+                if w in visited:
+                    if visited[w][1] == -1:
+                        visited[w] = (visited[w][0], v[2] + 1)
+                        sap_queue.put((w, 'b', v[2] + 1))
+                    if visited[w][0] != -1:
+                        temp = v[2] + 1 + visited[w][0]
+                        if temp < sapLength:
+                            sapLength = temp
+                            sapNode = w
+                else:
+                    visited[w] = (-1, v[2] + 1)
+                    sap_queue.put((w, 'b', v[2] + 1))
+    
+    return (sapNode, sapLength)
 
 
+                    
 class WordNet:
     def __init__(self, synsetFileName, hypernymFileName): # Constructor
         self.synsets = []
@@ -359,49 +411,49 @@ if __name__ == "__main__":
     d5.addEdge(4,1)
     print(cycleDetection(d5))'''
 
-    '''# Unit test for sap()
-    print('digraph6.txt')
-    d6 = Digraph.digraphFromFile('digraph6.txt')
-    print(sap(d6, [1], [5]))
-    if sap(d6, [1], [5]) == (0,2): print("pass")
-    else: print("fail")
-    print(sap(d6, [1], [1]))
-    if sap(d6, [1], [1]) == (1,0): print("pass")
-    else: print("fail")
-    print(sap(d6, [1], [4])) # Either (0,3) or (4,3)
-    tmp = sap(d6, [1], [4])
-    if tmp == (0,3) or tmp == (4,3): print("pass")
-    else: print("fail")
-    print(sap(d6, [1], [3]))
-    if sap(d6, [1], [3]) == (3,2): print("pass")
-    else: print("fail")
+    # Unit test for sap()
+    # print('digraph6.txt')
+    # d6 = Digraph.digraphFromFile('digraph6.txt')
+    # print(sap(d6, [1], [5]))
+    # if sap(d6, [1], [5]) == (0,2): print("pass")
+    # else: print("fail")
+    # print(sap(d6, [1], [1]))
+    # if sap(d6, [1], [1]) == (1,0): print("pass")
+    # else: print("fail")
+    # print(sap(d6, [1], [4])) # Either (0,3) or (4,3)
+    # tmp = sap(d6, [1], [4])
+    # if tmp == (0,3) or tmp == (4,3): print("pass")
+    # else: print("fail")
+    # print(sap(d6, [1], [3]))
+    # if sap(d6, [1], [3]) == (3,2): print("pass")
+    # else: print("fail")
 
-    print('digraph12.txt')
-    d12 = Digraph.digraphFromFile('digraph12.txt')
-    print(sap(d12, [3], [10]))      # (1,4)
-    if sap(d12, [3], [10]) == (1,4): print("pass")
-    else: print("fail")
-    print(sap(d12, [3], [10, 2]))   # (0,3)
-    if sap(d12, [3], [10, 2]) == (0,3): print("pass")
-    else: print("fail")
+    # print('digraph12.txt')
+    # d12 = Digraph.digraphFromFile('digraph12.txt')
+    # print(sap(d12, [3], [10]))      # (1,4)
+    # if sap(d12, [3], [10]) == (1,4): print("pass")
+    # else: print("fail")
+    # print(sap(d12, [3], [10, 2]))   # (0,3)
+    # if sap(d12, [3], [10, 2]) == (0,3): print("pass")
+    # else: print("fail")
 
-    print('digraph25.txt')
-    d25 = Digraph.digraphFromFile('digraph25.txt')
-    print(sap(d25, [13,23,24], [6,16,17]))  # (3,4)
-    if sap(d25, [13,23,24], [6,16,17]) == (3,4): print("pass")
-    else: print("fail")
-    print(sap(d25, [13,23,24], [6,16,17,4]))  # (3,4) or (1,4)
-    tmp = sap(d25, [13,23,24], [6,16,17,4])
-    if tmp == (3,4) or tmp == (1,4): print("pass")
-    else: print("fail")
-    print(sap(d25, [13,23,24], [6,16,17,1]))  # (1,3)
-    if sap(d25, [13,23,24], [6,16,17,1]) == (1,3): print("pass")
-    else: print("fail")
-    print(sap(d25, [13,23,24,17], [6,16,17,1]))  # (17,0)
-    if sap(d25, [13,23,24,17], [6,16,17,1]) == (17,0): print("pass")
-    else: print("fail")'''
+    # print('digraph25.txt')
+    # d25 = Digraph.digraphFromFile('digraph25.txt')
+    # print(sap(d25, [13,23,24], [6,16,17]))  # (3,4)
+    # if sap(d25, [13,23,24], [6,16,17]) == (3,4): print("pass")
+    # else: print("fail")
+    # print(sap(d25, [13,23,24], [6,16,17,4]))  # (3,4) or (1,4)
+    # tmp = sap(d25, [13,23,24], [6,16,17,4])
+    # if tmp == (3,4) or tmp == (1,4): print("pass")
+    # else: print("fail")
+    # print(sap(d25, [13,23,24], [6,16,17,1]))  # (1,3)
+    # if sap(d25, [13,23,24], [6,16,17,1]) == (1,3): print("pass")
+    # else: print("fail")
+    # print(sap(d25, [13,23,24,17], [6,16,17,1]))  # (17,0)
+    # if sap(d25, [13,23,24,17], [6,16,17,1]) == (17,0): print("pass")
+    # else: print("fail")
 
-    '''# Unit test with WordNet
+    # Unit test with WordNet
     print('WordNet test')
     wn = WordNet("synsets.txt", "hypernyms.txt")
     print(wn.isNoun("blue"))
@@ -448,17 +500,17 @@ if __name__ == "__main__":
     print(outcast(wn, "outcast9.txt"))
     tmp = outcast(wn, "outcast9.txt")
     if tmp != None and len(tmp) == 3 and tmp[0] == "fox": print("pass")
-    else: print("fail")'''
+    else: print("fail")
     
-    '''# Unit test for speed
-    print('speed test')
-    n=1000
-    d25 = Digraph.digraphFromFile('digraph25.txt')
-    tSAP = timeit.timeit(lambda: sap(d25, [13,23,24], [6,16,17]), number=n)/n    
-    tBFS = timeit.timeit(lambda: BFSforEvaluation(d25), number=n)/n    
-    print(f"{n} calls of sap() on d25 took {tSAP:.10f} sec on average, and the same number of calls of BFS() took {tBFS:.10f} sec on average")
-    if tSAP < tBFS: print("pass")
-    else: print("fail")'''
+    # Unit test for speed
+    # print('speed test')
+    # n=1000
+    # d25 = Digraph.digraphFromFile('digraph25.txt')
+    # tSAP = timeit.timeit(lambda: sap(d25, [13,23,24], [6,16,17]), number=n)/n    
+    # tBFS = timeit.timeit(lambda: BFSforEvaluation(d25), number=n)/n    
+    # print(f"{n} calls of sap() on d25 took {tSAP:.10f} sec on average, and the same number of calls of BFS() took {tBFS:.10f} sec on average")
+    # if tSAP < tBFS: print("pass")
+    # else: print("fail")
     
 
     
