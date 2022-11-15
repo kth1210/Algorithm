@@ -1,6 +1,6 @@
+import timeit
 from pathlib import Path
 from queue import PriorityQueue
-import timeit
 
 '''
 Class for storing weighted edges
@@ -295,9 +295,32 @@ def mstPrimLazy(g):
 Find an MST (Minimum Spanning Tree) using Prim's algorithm (eager version)
     and return the MST with its weight sum
 '''
-def mstPrimEager(g):    
-    return [], 0.0
+def mstPrimEager(g):   
+    def include(w):
+        included[w] = True
+        for e in g.adj[w]:
+            x = e.other(w)
+            if not included[x]:
+                if not pq.contains(x):
+                    pq.insert(x, e)
+                elif e.weight < pq.keys[x].weight:
+                    pq.decreaseKey(x, e)        
 
+    edgesInMST = []
+    included = [False] * g.V
+    weightSum = 0
+    pq = IndexMinPQ(g.V)
+    include(0)
+
+    while len(edgesInMST) < g.V-1:
+        e, w = pq.delMin()
+        if included[e.v] and included[e.w]: continue
+        edgesInMST.append(e)
+        weightSum += e.weight
+        include(w)
+
+    return edgesInMST, weightSum
+    
 
 if __name__ == "__main__":
     '''# Unit test for Edge and WUGraph
