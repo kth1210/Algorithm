@@ -91,8 +91,41 @@ class SeamCarver:
         self.image = carvedImage
 
     def findVerticalSeam(self):
-        # Add codes below
-        return [0] * self.height()
+        distTo = [[self.MAX_ENERGY for _ in range(self.width())]]
+        edgeTo = [[None for _ in range(self.width())]]
+
+        for y in range(1, self.height()):
+            distTo.append([0 for _ in range(self.width())])
+            edgeTo.append([0 for _ in range(self.width())])
+            for x in range(0, self.width()):
+                if x == 0:
+                    temp = [distTo[y-1][x], float("inf"), distTo[y-1][x+1]]
+                elif x == self.width()-1:
+                    temp = [distTo[y-1][x], distTo[y-1][x-1], float("inf")]
+                else:
+                    temp = [distTo[y-1][x], distTo[y-1][x-1], distTo[y-1][x+1]]
+
+                minVal = min(temp)
+                minIdx = temp.index(minVal)
+
+                distTo[y][x] = minVal + self.energy(x, y)
+                if minIdx == 0:
+                    edgeTo[y][x] = x
+                elif minIdx == 1:
+                    edgeTo[y][x] = x-1
+                elif minIdx == 2:
+                    edgeTo[y][x] = x+1
+
+        result = [0 for _ in range(self.height())]
+        resultTemp = distTo[self.height() - 1]
+        resultMin = min(resultTemp)
+        resultIdx = resultTemp.index(resultMin)
+
+        for yy in range(self.height()-1, -1, -1):
+            result[yy] = resultIdx
+            resultIdx = edgeTo[yy][resultIdx]
+
+        return result
 
 
 def showBeforeAfterSeamCarving(fileName, numCarve):
@@ -138,125 +171,118 @@ if __name__ == "__main__":
     '''    
 
     
-    '''# Unit test 1 for vertical seam    
-    image = Image.new("RGB", (10,10), "white")
-    pixels = image.load()
-    for row in range(image.size[0]):         
-        pixels[4,row] = (255,0,0)
-        pixels[5,row] = (255,0,0)
-    sc = SeamCarver(image)           
-    #print(sc.energeMap(), '\n')
-    #sc.image.show()
+    # Unit test 1 for vertical seam    
+    # image = Image.new("RGB", (10,10), "white")
+    # pixels = image.load()
+    # for row in range(image.size[0]):         
+    #     pixels[4,row] = (255,0,0)
+    #     pixels[5,row] = (255,0,0)
+    # sc = SeamCarver(image)           
+    # #print(sc.energeMap(), '\n')
+    # #sc.image.show()
     
-    vs = sc.findVerticalSeam()
-    print(sc.energyMapWithVerticalSeam(vs),'\n')
-    if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
-    else: print("fail")
-    sc.removeVerticalSeam(vs)
-    if sc.width() == 9: print("pass")
-    else: print("fail") 
+    # vs = sc.findVerticalSeam()
+    # print(sc.energyMapWithVerticalSeam(vs),'\n')
+    # if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
+    # else: print("fail")
+    # sc.removeVerticalSeam(vs)
+    # if sc.width() == 9: print("pass")
+    # else: print("fail") 
     
-    vs = sc.findVerticalSeam()
-    #print(sc.energyMapWithVerticalSeam(vs),'\n')  
-    if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
-    else: print("fail")
-    sc.removeVerticalSeam(vs)
-    if sc.width() == 8: print("pass")
-    else: print("fail") 
+    # vs = sc.findVerticalSeam()
+    # #print(sc.energyMapWithVerticalSeam(vs),'\n')  
+    # if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
+    # else: print("fail")
+    # sc.removeVerticalSeam(vs)
+    # if sc.width() == 8: print("pass")
+    # else: print("fail") 
 
-    vs = sc.findVerticalSeam()
-    #print(sc.energyMapWithVerticalSeam(vs),'\n')
-    if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
-    else: print("fail")
-    sc.removeVerticalSeam(vs)
-    if sc.width() == 7: print("pass")
-    else: print("fail")
+    # vs = sc.findVerticalSeam()
+    # #print(sc.energyMapWithVerticalSeam(vs),'\n')
+    # if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
+    # else: print("fail")
+    # sc.removeVerticalSeam(vs)
+    # if sc.width() == 7: print("pass")
+    # else: print("fail")
 
-    vs = sc.findVerticalSeam()
-    #print(sc.energyMapWithVerticalSeam(vs),'\n')
-    if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
-    else: print("fail")
-    sc.removeVerticalSeam(vs)
-    if sc.width() == 6: print("pass")
-    else: print("fail")
+    # vs = sc.findVerticalSeam()
+    # #print(sc.energyMapWithVerticalSeam(vs),'\n')
+    # if int(sc.energySumOverVerticalSeam(vs)) == 2000: print("pass")
+    # else: print("fail")
+    # sc.removeVerticalSeam(vs)
+    # if sc.width() == 6: print("pass")
+    # else: print("fail")
 
-    vs = sc.findVerticalSeam()
-    #print(sc.energyMapWithVerticalSeam(vs),'\n')
-    if int(sc.energySumOverVerticalSeam(vs)) == 4880: print("pass")
-    else: print("fail")
-    sc.removeVerticalSeam(vs)
-    if sc.width() == 5: print("pass")
-    else: print("fail")'''
-    
-
-    
-    '''# Unit test 2 for vertical seam
-    image2 = Image.new("RGB", (3,10), "white")
-    sc2 = SeamCarver(image2)
-    vs2 = sc2.findVerticalSeam()
-    print(sc2.energyMapWithVerticalSeam(vs2))
-    if all([vs2[i]==1 for i in range(1,image2.size[0]-1)]): print("pass")
-    else: print("fail")
-    sc2.removeVerticalSeam(vs2)
-    if sc2.width() == 2: print("pass")
-    else: print("fail")
-
-    vs2 = sc2.findVerticalSeam()
-    #print(sc2.energyMapWithVerticalSeam(vs2))
-    if all([vs2[i]==0 or vs2[i]==1 for i in range(0,image2.size[0])]): print("pass")
-    else: print("fail")
-    sc2.removeVerticalSeam(vs2)
-    if sc2.width() == 1: print("pass")
-    else: print("fail")'''
+    # vs = sc.findVerticalSeam()
+    # #print(sc.energyMapWithVerticalSeam(vs),'\n')
+    # if int(sc.energySumOverVerticalSeam(vs)) == 4880: print("pass")
+    # else: print("fail")
+    # sc.removeVerticalSeam(vs)
+    # if sc.width() == 5: print("pass")
+    # else: print("fail")
     
 
     
-    '''# Unit test 3 for vertical seam
-    image3 = Image.open(Path(__file__).with_name("heart.jpg")) # Use the location of the current .py file
-    sc3 = SeamCarver(image3)
-    vs3 = sc3.findVerticalSeam()
-    if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
-    else: print("fail")
+    # Unit test 2 for vertical seam
+    # image2 = Image.new("RGB", (3,10), "white")
+    # sc2 = SeamCarver(image2)
+    # vs2 = sc2.findVerticalSeam()
+    # print(sc2.energyMapWithVerticalSeam(vs2))
+    # if all([vs2[i]==1 for i in range(1,image2.size[0]-1)]): print("pass")
+    # else: print("fail")
+    # sc2.removeVerticalSeam(vs2)
+    # if sc2.width() == 2: print("pass")
+    # else: print("fail")
 
-    image3 = Image.open(Path(__file__).with_name("heartR.jpg")) # Use the location of the current .py file
-    sc3 = SeamCarver(image3)
-    vs3 = sc3.findVerticalSeam()
-    if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
-    else: print("fail")
+    # vs2 = sc2.findVerticalSeam()
+    # #print(sc2.energyMapWithVerticalSeam(vs2))
+    # if all([vs2[i]==0 or vs2[i]==1 for i in range(0,image2.size[0])]): print("pass")
+    # else: print("fail")
+    # sc2.removeVerticalSeam(vs2)
+    # if sc2.width() == 1: print("pass")
+    # else: print("fail")
+    
 
-    image3 = Image.open(Path(__file__).with_name("stars.jpg")) # Use the location of the current .py file
-    sc3 = SeamCarver(image3)    
-    #import sys
-    #with open(Path(__file__).with_name('starsEnergyMap.txt'),'w') as sys.stdout:
-    vs3 = sc3.findVerticalSeam()  
-    #print(vs3)  
-    if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
-    else: print("fail")    
-    #print(sc3.energyMapWithVerticalSeam(vs3))
+    
+    # Unit test 3 for vertical seam
+    # image3 = Image.open(Path(__file__).with_name("heart.jpg")) # Use the location of the current .py file
+    # sc3 = SeamCarver(image3)
+    # vs3 = sc3.findVerticalSeam()
+    # if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
+    # else: print("fail")
 
-    image3 = Image.open(Path(__file__).with_name("piplub.jpg")) # Use the location of the current .py file
-    sc3 = SeamCarver(image3)
-    vs3 = sc3.findVerticalSeam()
-    if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
-    else: print("fail")'''
+    # image3 = Image.open(Path(__file__).with_name("stars.jpg")) # Use the location of the current .py file
+    # sc3 = SeamCarver(image3)    
+    # #import sys
+    # #with open(Path(__file__).with_name('starsEnergyMap.txt'),'w') as sys.stdout:
+    # vs3 = sc3.findVerticalSeam()  
+    # #print(vs3)  
+    # if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
+    # else: print("fail")    
+    # #print(sc3.energyMapWithVerticalSeam(vs3))
+
+    # image3 = Image.open(Path(__file__).with_name("piplub.jpg")) # Use the location of the current .py file
+    # sc3 = SeamCarver(image3)
+    # vs3 = sc3.findVerticalSeam()
+    # if int(sc3.energySumOverVerticalSeam(vs3)) == 2000: print("pass")
+    # else: print("fail")
     
 
     
     # Visual inpsection for seam carving
-    showBeforeAfterSeamCarving("heart.jpg", 10)
-    showBeforeAfterSeamCarving("heartR.jpg", 10)
-    showBeforeAfterSeamCarving("stars.jpg", 10)    
-    showBeforeAfterSeamCarving("piplub.jpg", 10)    
+    # showBeforeAfterSeamCarving("heart.jpg", 10)
+    # showBeforeAfterSeamCarving("stars.jpg", 10)    
+    # showBeforeAfterSeamCarving("piplub.jpg", 10)    
     
 
-    '''
+    
     # Speed test
-    image3 = Image.open(Path(__file__).with_name("piplub.jpg")) # Use the location of the current .py file
-    sc3 = SeamCarver(image3)
-    n=20
-    tVerticalSeam = timeit.timeit(lambda: sc3.findVerticalSeam(), number=n)/n
-    print(f"Finding {n} vertical seams on an 100x100 image took {tVerticalSeam} sec on average")
-    if (tVerticalSeam < 0.2): print("pass for speed test")
-    else: print("fail for speed test")
-    '''
+    # image3 = Image.open(Path(__file__).with_name("piplub.jpg")) # Use the location of the current .py file
+    # sc3 = SeamCarver(image3)
+    # n=20
+    # tVerticalSeam = timeit.timeit(lambda: sc3.findVerticalSeam(), number=n)/n
+    # print(f"Finding {n} vertical seams on an 100x100 image took {tVerticalSeam} sec on average")
+    # if (tVerticalSeam < 0.2): print("pass for speed test")
+    # else: print("fail for speed test")
+    
     
