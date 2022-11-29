@@ -2,6 +2,7 @@ from pathlib import Path
 from queue import Queue
 import timeit
 
+# 간선 나타냄
 class FlowEdge:
     def __init__(self, v, w, capacity): # Create an edge v->w with a double capacity
         assert isinstance(v, int) and isinstance(w, int), f"v({v}) and/or w({w}) are not integers"
@@ -58,6 +59,7 @@ class FlowEdge:
 '''
 Class that represents Digraphs with Flow/Capacity
 '''
+# 그래프 나타냄
 class FlowNetwork:
     def __init__(self, V): # Constructor
         assert isinstance(V, int) and V >= 0, f"V({V}) is not an integer >= 0"
@@ -120,7 +122,7 @@ class FlowNetwork:
     def validateInstance(g):
         assert isinstance(g, FlowNetwork), f"g={g} is not an instance of FlowNetwork"
 
-
+# 예습
 def findAugmentingPathBFS(g, s):
     FlowNetwork.validateInstance(g)
     edgeTo = [None for _ in range(g.V)]
@@ -145,6 +147,7 @@ def findAugmentingPathBFS(g, s):
 Class that performs FordFulkerson algorithm to identify maxflow and mincut
     and that stores the results
 '''
+# 그래프를 여기 넣어서 max flow 구하기 (저장됨)
 class FordFulkerson:
     def __init__(self, g, s, t):        
         FlowNetwork.validateInstance(g)
@@ -192,6 +195,7 @@ class FordFulkerson:
 
         return self.visited[self.t] # Is t reachable from s with current flow assignment?
 
+    # 어느 팀이 문제인지 확인
     def inCut(self, vertex): # Is vertex reachable from s with current flow assignment?
         assert vertex>=0 and vertex<self.g.V, f"vertex({vertex}) is not within 0 ~ {self.g.V-1}"
         return self.visited[vertex]
@@ -254,7 +258,56 @@ class BaseballElimination:
     # Return (True, a list of team names responsible for the elimination), if teamName must be eliminated
     # Return (False, []), if teamName is NOT eliminated yet
     def isEliminated(self, teamName):
-        return True, []
+        result = []
+        teamNameID = self.team2id[teamName]
+
+        for i in self.teams:
+            if i == teamName:
+                continue
+            
+            if (self.wins[teamNameID] + self.remaining[teamNameID]) < self.wins[self.team2id[i]]:
+                result.append(i)
+        
+        if len(result) > 0:
+            return (True, result)
+        
+        teamCount = len(self.teams)
+        gameCount = int(teamCount * (teamCount - 1) / 2)
+        nodeCount = 2 + teamCount + gameCount
+        
+        fn = FlowNetwork(nodeCount)
+        
+        idx = 1
+        for i in range(teamCount):
+            if i == teamNameID:
+                continue
+            for j in range(i+1, teamCount):
+                if j == teamNameID:
+                    idx += 1
+                    continue
+
+                fn.addEdge(FlowEdge(0, idx, self.against[i][j]))
+                fn.addEdge(FlowEdge(idx, gameCount + 1 + i, float('inf')))
+                fn.addEdge(FlowEdge(idx, gameCount + 1 + j, float('inf')))
+                
+                idx += 1
+            
+            fn.addEdge(FlowEdge(gameCount + 1 + i, nodeCount - 1, self.wins[teamNameID] + self.remaining[teamNameID] - self.wins[i]))
+
+        ffk = FordFulkerson(fn, 0, fn.V-1)
+
+        for i in range(teamCount):
+            if i == teamNameID:
+                continue
+
+            if ffk.inCut(gameCount + 1 + i):
+                print(self.teams[i])
+                result.append(self.teams[i])
+
+        if len(result) > 0:
+            return (True, result)
+        else:
+            return (False, [])
 
 
 if __name__ == "__main__":
@@ -359,6 +412,7 @@ if __name__ == "__main__":
         if ff8.inCut(v): print(v, end=' ')
     print()
 
+    
     g8m = FlowNetwork(8)
     g8m.addEdge(FlowEdge(0,1,6))
     g8m.addEdge(FlowEdge(0,2,1))
@@ -461,7 +515,9 @@ if __name__ == "__main__":
     print()
     '''
 
-    '''# Unit test for BaseballElimination
+
+
+    # Unit test for BaseballElimination
     be4 = BaseballElimination("teams4.txt")
     print(be4)
     be4.printResult()    
@@ -520,4 +576,4 @@ if __name__ == "__main__":
     if be12.isEliminated("Chile") == (True, ['Poland', 'USA', 'Brazil', 'Iran']): print("P ",end='')
     else: print("F ",end='')
     print()
-    print()'''
+    print()
