@@ -301,7 +301,6 @@ class BaseballElimination:
                 continue
 
             if ffk.inCut(gameCount + 1 + i):
-                print(self.teams[i])
                 result.append(self.teams[i])
 
         if len(result) > 0:
