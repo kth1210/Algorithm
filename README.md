@@ -12,3 +12,5 @@
 [2146] 다리 만들기 - https://storing.tistory.com/27?category=1043009
 
 3. Sorting 📶
+* _문제풀이_<br>
+[10989] 수 정렬하기 3 - https://storing.tistory.com/31
