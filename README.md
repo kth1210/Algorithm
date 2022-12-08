@@ -13,5 +13,5 @@
 
 3. Sorting 📶
 * _문제풀이_<br>
-[10989] 수 정렬하기 3 - https://storing.tistory.com/31
+[10989] 수 정렬하기 3 - https://storing.tistory.com/31  
 [11000] 강의실 배정 - https://storing.tistory.com/34
