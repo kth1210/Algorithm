@@ -18,4 +18,3 @@ for _ in range(1, N):
             heapq.heappush(arr, val)
 
 print(arr[0])
-

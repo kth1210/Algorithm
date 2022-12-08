@@ -6,7 +6,7 @@ lecture = []
 room = []
 
 for _ in range(N):
-    s, t = list(map(int, sys.stdin.readline().split()))
+    s, t = map(int, sys.stdin.readline().split())
     lecture.append([s, t])
 
 lecture.sort()
@@ -20,3 +20,4 @@ for idx in range(1, N):
         heapq.heappush(room, lecture[idx][1])
 
 print(len(room))
+print(room)
