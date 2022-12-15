@@ -1,17 +1,18 @@
 import sys
 
 N = int(sys.stdin.readline().rstrip())
-arr = {}
+temp = {}
 
 for _ in range(N):
-    f, s = sys.stdin.readline().split('.')
+    f, s = sys.stdin.readline().rstrip().split('.')
     
-    if s not in arr:
-        arr[s] = 1
+    if s not in temp:
+        temp[s] = 1
     else:
-        arr[s] += 1
+        temp[s] += 1
 
-arr.sort()
+arr = list(temp.items())
+arr.sort(key = lambda x : x[0])
 
-for idx in range(N):
-    
+for idx in range(len(arr)):
+    print(arr[idx][0], arr[idx][1])
