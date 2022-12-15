@@ -15,7 +15,6 @@ for idx in range(M, N + 1):
 arr.sort()
 
 for i in range(C // 10):
-    print(i)
     for j in range(10):
         print(arr[i*10 + j][1], end=' ')
     print()
