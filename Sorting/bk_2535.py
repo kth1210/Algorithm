@@ -21,7 +21,7 @@ for idx in range(N):
         continue
     else:
         print(arr[idx][0], arr[idx][1])
+        
         cnt += 1
-
         if cnt == 3:
             break
