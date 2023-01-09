@@ -6,11 +6,7 @@ def bin_search(arr, val, start, end):
         mid = (start + end) // 2
 
         if arr[mid] < val:
-            # result = mid
             start = mid + 1
-        # elif arr[mid] == val:
-        #     result = mid
-        #     start
         else:
             result = mid
             end = mid - 1
@@ -35,10 +31,7 @@ result_cnt = 0
 
 for idx in range(1, H+1):
     val = bin_search(bottom, idx, 0, N//2 - 1) + bin_search(top, H-idx+1, 0, N//2 - 1)
-    # print(bin_search(bottom, idx, 0, N//2 - 1))
-    # print(bin_search(top, H-idx+1, 0, N//2 - 1))
-    # print()
-    
+
     val = N - val
     if result_val > val:
         result_val = val
