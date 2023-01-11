@@ -29,10 +29,8 @@ for _ in range(T):
     result = 0
 
     B.sort()
-    # print(B)
 
     for n in A:
         result += bin_search(B, n, 0, M - 1)
-        # print(result)
     
     print(result)
